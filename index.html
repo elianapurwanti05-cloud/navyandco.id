@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navyandco.id - Business System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:Poppins;
+background:linear-gradient(135deg,#0b132b,#1c2541,#3a506b);
+color:white;
+}
+
+/* CART ICON */
+#cart-fixed{
+position:fixed;
+top:15px;
+right:340px;
+background:#3a506b;
+padding:8px 12px;
+border-radius:20px;
+cursor:pointer;
+z-index:1000;
+font-size:13px;
+}
+
+/* HERO LEFT */
+.hero{
+text-align:left;
+padding:40px 20px 20px 20px;
+}
+
+.hero h1{
+margin:0;
+}
+
+.hero p{
+margin-top:5px;
+opacity:0.8;
+}
+
+/* TITLE */
+.section-title{
+text-align:center;
+}
+
+/* CATEGORY */
+.category{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.cat-btn{
+padding:10px 15px;
+border:none;
+border-radius:20px;
+background:#1c2541;
+color:white;
+cursor:pointer;
+border:1px solid #3a506b;
+}
+
+.cat-btn:hover{
+background:#5bc0be;
+color:#0b132b;
+}
+
+/* PRODUCT */
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+background:#1c2541;
+margin:10px;
+padding:15px;
+border-radius:12px;
+width:200px;
+text-align:center;
+border:1px solid #3a506b;
+}
+
+.icon{font-size:35px;}
+
+.btn{
+padding:10px 15px;
+border:none;
+border-radius:25px;
+cursor:pointer;
+background:#5bc0be;
+color:#0b132b;
+font-weight:600;
+margin-top:10px;
+}
+
+/* CART SIDEBAR */
+#cart-panel{
+position:fixed;
+top:0;
+right:0;
+width:320px;
+height:100%;
+background:#1c2541;
+padding:15px;
+box-shadow:-5px 0 20px rgba(0,0,0,0.4);
+overflow-y:auto;
+z-index:999;
+transition:0.3s;
+}
+
+.cart-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:8px 0;
+border-bottom:1px solid #3a506b;
+}
+
+.del-btn{
+background:red;
+border:none;
+color:white;
+padding:5px 8px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.checkout-btn{
+width:100%;
+padding:12px;
+background:#22c55e;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* MODAL */
+#modal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.modal-box{
+background:#1c2541;
+padding:20px;
+border-radius:12px;
+width:300px;
+text-align:center;
+}
+
+select{
+width:100%;
+padding:10px;
+border-radius:10px;
+}
+
+/* NOTIF */
+#notif{
+position:fixed;
+top:20px;
+left:20px;
+background:#22c55e;
+color:#0b132b;
+padding:10px;
+border-radius:10px;
+display:none;
+z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<!-- CART ICON -->
+<div id="cart-fixed">
+🛒 <span id="cart-info">0 Item | Rp 0</span>
+</div>
+
+<!-- HERO (SUDAH DI KIRI) -->
+<div class="hero">
+<h1>Navyandco.id</h1>
+<p>Business System Store</p>
+</div>
+
+<h2 class="section-title">Pilihan Produk</h2>
+
+<!-- CATEGORY -->
+<div class="category">
+<button class="cat-btn" onclick="filter('Premium')">Premium</button>
+<button class="cat-btn" onclick="filter('Sosmed')">Sosmed</button>
+<button class="cat-btn" onclick="filter('Game')">Game</button>
+</div>
+
+<!-- PRODUCT -->
+<div class="container" id="list"></div>
+
+<!-- CART SIDEBAR -->
+<div id="cart-panel">
+<div class="cart-header">
+<h3>Keranjang</h3>
+<span onclick="toggleCart()" style="cursor:pointer;font-size:20px;">❌</span>
+</div>
+
+<div id="cartBox"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+<div class="modal-box">
+<h3 id="title"></h3>
+<select id="paketSelect"></select>
+<br><br>
+<button class="btn" onclick="addCart()">Tambah</button>
+<button class="btn" onclick="closeModal()">Tutup</button>
+</div>
+</div>
+
+<!-- NOTIF -->
+<div id="notif"></div>
+
+<script>
+
+const ADMIN_WA="6281234567890";
+
+const products=[
+{name:"Netflix",icon:"🎬",category:"Premium",
+paket:[{name:"1 Profile",price:14000},{name:"Sharing",price:22000}]},
+
+{name:"Canva",icon:"🎨",category:"Premium",
+paket:[{name:"1 Bulan",price:8000}]},
+
+{name:"CapCut",icon:"✂️",category:"Premium",
+paket:[{name:"Pro",price:10000}]},
+
+{name:"IG Followers",icon:"📱",category:"Sosmed",
+paket:[{name:"1K Followers",price:10000}]},
+
+{name:"TikTok Like",icon:"❤️",category:"Sosmed",
+paket:[{name:"1K Like",price:8000}]},
+
+{name:"Mobile Legends",icon:"🎮",category:"Game",
+paket:[{name:"86 Diamond",price:20000}]}
+];
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+let selectedProduct=null;
+
+function updateCart(){
+let total=0;
+cart.forEach(c=>total+=c.price);
+document.getElementById("cart-info").innerText=
+`${cart.length} Item | Rp ${total}`;
+}
+
+function toggleCart(){
+let panel=document.getElementById("cart-panel");
+panel.style.display = panel.style.display==="none" ? "block" : "none";
+}
+
+function filter(cat){
+render(products.filter(p=>p.category===cat));
+}
+
+function render(data=products){
+let html="";
+data.forEach(p=>{
+html+=`
+<div class="card">
+<div class="icon">${p.icon}</div>
+<h3>${p.name}</h3>
+<button class="btn" onclick="openModal('${p.name}')">Pilih Paket</button>
+</div>`;
+});
+document.getElementById("list").innerHTML=html;
+renderCart();
+updateCart();
+}
+render();
+
+function openModal(name){
+selectedProduct=products.find(p=>p.name===name);
+
+let sel=document.getElementById("paketSelect");
+sel.innerHTML="";
+
+selectedProduct.paket.forEach((p,i)=>{
+sel.innerHTML+=`
+<option value="${i}">
+${p.name} - Rp ${p.price}
+</option>`;
+});
+
+document.getElementById("modal").style.display="flex";
+document.getElementById("title").innerText=selectedProduct.name;
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+function addCart(){
+let i=document.getElementById("paketSelect").value;
+let paket=selectedProduct.paket[i];
+
+cart.push({
+name:selectedProduct.name+" - "+paket.name,
+price:paket.price
+});
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+notif("✔ Masuk keranjang");
+renderCart();
+updateCart();
+closeModal();
+}
+
+function renderCart(){
+let html="";
+let total=0;
+
+cart.forEach((c,i)=>{
+html+=`
+<div class="cart-item">
+<span>${c.name} - Rp ${c.price}</span>
+<button class="del-btn" onclick="hapus(${i})">❌</button>
+</div>`;
+total+=c.price;
+});
+
+html+=`
+<hr>
+<b>Total: Rp ${total}</b>
+<button class="checkout-btn" onclick="checkout()">Checkout WhatsApp</button>
+`;
+
+document.getElementById("cartBox").innerHTML=html;
+}
+
+function hapus(i){
+cart.splice(i,1);
+localStorage.setItem("cart",JSON.stringify(cart));
+renderCart();
+updateCart();
+notif("❌ Item dihapus");
+}
+
+function checkout(){
+let msg="ORDER NAVYANDCO.ID\n\n";
+let total=0;
+
+cart.forEach((c,i)=>{
+msg+=`${i+1}. ${c.name} - Rp ${c.price}\n`;
+total+=c.price;
+});
+
+msg+=`\nTOTAL: Rp ${total}`;
+
+window.open(`https://wa.me/${ADMIN_WA}?text=`+encodeURIComponent(msg));
+}
+
+function notif(t){
+let n=document.getElementById("notif");
+n.innerText=t;
+n.style.display="block";
+setTimeout(()=>n.style.display="none",2000);
+}
+
+updateCart();
+renderCart();
+
+</script>
+
+</body>
+</html>

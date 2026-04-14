@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navyandco.id - Premium Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family:'Poppins',sans-serif;
+  margin:0;
+  background:#f5f7fa;
+}
+
+/* HERO */
+.hero {
+  background:linear-gradient(135deg,#0d1b2a,#1b263b);
+  color:white;
+  text-align:center;
+  padding:60px 20px;
+  position:relative;
+}
+.hero h1 {font-size:2.5em;}
+.hero p {color:#ccc;}
+
+/* CART ICON */
+.cart-icon {
+  position:absolute;
+  right:20px;
+  top:20px;
+  background:white;
+  padding:8px 12px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+/* DROPDOWN */
+.dropdown {
+  text-align:center;
+  margin:20px;
+}
+select {
+  padding:10px;
+  border-radius:10px;
+  border:none;
+}
+
+/* PRODUK */
+#produk-container {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.card {
+  background:white;
+  width:200px;
+  margin:10px;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.1);
+  text-align:center;
+  transition:0.2s;
+}
+.card:hover { transform:translateY(-5px); }
+.card img {
+  width:100%;
+  border-radius:10px;
+}
+
+.btn {
+  margin-top:10px;
+  padding:8px;
+  border:none;
+  background:#0d1b2a;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+/* PAKET */
+#pilihan-paket {
+  background:white;
+  margin:20px;
+  padding:15px;
+  border-radius:15px;
+}
+
+/* CART POPUP */
+#cart-popup {
+  position:fixed;
+  right:-350px;
+  top:0;
+  width:320px;
+  height:100%;
+  background:white;
+  transition:0.3s;
+  box-shadow:-5px 0 20px rgba(0,0,0,0.2);
+  z-index:999;
+}
+#cart-popup.active { right:0; }
+
+.cart-item {
+  padding:10px;
+  border-bottom:1px solid #eee;
+  display:flex;
+  justify-content:space-between;
+}
+
+/* NOTIF */
+#notif {
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#28a745;
+  color:white;
+  padding:10px;
+  display:none;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <h1>🔥 Navyandco.id</h1>
+  <p>Premium Account Murah • Aman • Bergaransi</p>
+
+  <div class="cart-icon" onclick="toggleCart()">
+    🛒 <span id="cart-count">0</span>
+  </div>
+</div>
+
+<!-- DROPDOWN -->
+<div class="dropdown">
+  <select onchange="filterProduk(this.value)">
+    <option value="all">Semua</option>
+    <option value="Premium">Premium</option>
+    <option value="Sosmed">Sosmed</option>
+    <option value="Game">Game</option>
+  </select>
+</div>
+
+<!-- PRODUK -->
+<div id="produk-container"></div>
+
+<!-- PAKET -->
+<div id="pilihan-paket" style="display:none;">
+  <h3 id="nama-produk"></h3>
+  <div id="paket-list"></div>
+</div>
+
+<!-- CART -->
+<div id="cart-popup">
+  <h3 style="padding:10px;">Keranjang</h3>
+  <div id="cart-items"></div>
+  <h4 style="padding:10px;">Total: Rp <span id="total">0</span></h4>
+  <button onclick="checkoutWA()" style="width:90%;margin:10px;">Checkout</button>
+</div>
+
+<div id="notif"></div>
+
+<script>
+
+// DATA PRODUK FULL
+const allProducts=[
+{id:1,name:"Netflix",category:"Premium"},
+{id:2,name:"Canva",category:"Premium"},
+{id:3,name:"ChatGPT",category:"Premium"},
+{id:4,name:"Vidio",category:"Premium"},
+{id:5,name:"CapCut",category:"Premium"},
+{id:6,name:"YouTube",category:"Premium"},
+{id:7,name:"Blackbox",category:"Premium"},
+
+{id:8,name:"Followers IG",category:"Sosmed"},
+{id:9,name:"Like TikTok",category:"Sosmed"},
+
+{id:10,name:"Top Up Game",category:"Game"}
+];
+
+let selectedProduct=null;
+let cart=[];
+
+// LOAD PRODUK
+function filterProduk(k){
+  let data = k==="all"?allProducts:allProducts.filter(p=>p.category===k);
+
+  let div=document.getElementById('produk-container');
+  div.innerHTML='';
+
+  data.forEach(p=>{
+    div.innerHTML+=`
+    <div class="card">
+      <img src="https://via.placeholder.com/150">
+      <h3>${p.name}</h3>
+      <p>${p.category}</p>
+      <button class="btn" onclick="pilihProduk(${p.id})">Pilih</button>
+    </div>`;
+  });
+}
+filterProduk("all");
+
+// PILIH PRODUK
+function pilihProduk(id){
+  selectedProduct = allProducts.find(p=>p.id===id);
+  document.getElementById('pilihan-paket').style.display='block';
+  document.getElementById('nama-produk').innerText=selectedProduct.name;
+
+  let paket=[];
+
+  if(selectedProduct.name==="Netflix"){
+    paket=[{nama:"1 Profile",price:14000},{nama:"Sharing",price:22000}];
+  }
+  else if(selectedProduct.name==="Canva"){
+    paket=[{nama:"1 Bulan",price:1000},{nama:"1 Tahun",price:8000}];
+  }
+  else if(selectedProduct.category==="Sosmed"){
+    paket=[{nama:"1000 Followers",price:10000}];
+  }
+  else if(selectedProduct.category==="Game"){
+    paket=[{nama:"100 Diamond",price:15000}];
+  }
+  else{
+    paket=[{nama:"1 Bulan",price:10000}];
+  }
+
+  tampilkanPaket(paket);
+}
+
+// TAMPILKAN PAKET
+function tampilkanPaket(paket){
+  let div=document.getElementById('paket-list');
+  div.innerHTML='';
+
+  paket.forEach(p=>{
+    div.innerHTML+=`
+    <div style="margin:10px 0;">
+      ${p.nama} - Rp ${p.price}
+      <button onclick="tambahCart('${p.nama}',${p.price})">Tambah</button>
+    </div>`;
+  });
+}
+
+// TAMBAH CART
+function tambahCart(nama,price){
+  cart.push({produk:selectedProduct.name,paket:nama,harga:price});
+  renderCart();
+  document.getElementById('cart-count').innerText=cart.length;
+  notif("✔ Ditambahkan");
+}
+
+// RENDER CART
+function renderCart(){
+  let div=document.getElementById('cart-items');
+  div.innerHTML='';
+  let total=0;
+
+  if(cart.length===0){
+    div.innerHTML="<p style='padding:10px;color:#888;'>Keranjang kosong</p>";
+    document.getElementById('total').innerText=0;
+    return;
+  }
+
+  cart.forEach((item,i)=>{
+    total+=item.harga;
+    div.innerHTML+=`
+    <div class="cart-item">
+      ${item.produk} - ${item.paket}
+      <span>Rp ${item.harga}</span>
+    </div>`;
+  });
+
+  document.getElementById('total').innerText=total;
+}
+
+// CART TOGGLE
+function toggleCart(){
+  document.getElementById('cart-popup').classList.toggle('active');
+}
+
+// NOTIF
+function notif(t){
+  let n=document.getElementById('notif');
+  n.innerText=t;
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',2000);
+}
+
+// CHECKOUT WA DETAIL
+function checkoutWA(){
+  if(cart.length===0){
+    alert("Keranjang kosong!");
+    return;
+  }
+
+  let msg="Halo Admin Navyandco.id 👋\n\nSaya ingin order:\n\n";
+  let total=0;
+
+  cart.forEach((item,i)=>{
+    msg+=`${i+1}. ${item.produk} - ${item.paket} (Rp ${item.harga})\n`;
+    total+=item.harga;
+  });
+
+  msg+=`\nTotal: Rp ${total}\n\nMetode pembayaran:\n- Dana\n- BRI\n- QRIS`;
+
+  window.open("https://wa.me/6281234567890?text="+encodeURIComponent(msg));
+}
+
+</script>
+
+</body>
+</html>
