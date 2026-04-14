@@ -21,7 +21,7 @@ padding:20px;
 text-align:center;
 }
 
-/* CART BUTTON */
+/* CART BTN */
 #cartBtn{
 position:fixed;
 top:12px;
@@ -49,7 +49,6 @@ border-radius:20px;
 background:#1c2541;
 color:white;
 cursor:pointer;
-font-size:14px;
 }
 
 /* GRID */
@@ -60,13 +59,8 @@ gap:10px;
 padding:10px;
 }
 
-@media(max-width:900px){
-.container{grid-template-columns:repeat(2,1fr);}
-}
-
-@media(max-width:600px){
-.container{grid-template-columns:1fr;}
-}
+@media(max-width:900px){.container{grid-template-columns:2fr 2fr;}}
+@media(max-width:600px){.container{grid-template-columns:1fr;}}
 
 /* CARD */
 .card{
@@ -84,8 +78,8 @@ border-radius:20px;
 background:#5bc0be;
 cursor:pointer;
 margin-top:10px;
-font-weight:600;
 width:100%;
+font-weight:600;
 }
 
 /* CART */
@@ -109,11 +103,6 @@ z-index:999;
 display:flex;
 justify-content:space-between;
 align-items:center;
-}
-
-.close{
-cursor:pointer;
-font-size:20px;
 }
 
 .item{
@@ -173,9 +162,7 @@ cursor:pointer;
 
 .small{font-size:12px;opacity:.8}
 
-.section-title{text-align:center}
-
-/* TOAST NOTIFIKASI */
+/* TOAST */
 #toast{
 position:fixed;
 bottom:20px;
@@ -185,32 +172,58 @@ background:#22c55e;
 color:white;
 padding:12px 18px;
 border-radius:10px;
-font-size:14px;
 opacity:0;
-pointer-events:none;
 transition:0.3s;
 z-index:2000;
 }
+#toast.show{opacity:1;transform:translateX(-50%) translateY(-10px);}
 
-#toast.show{
-opacity:1;
-transform:translateX(-50%) translateY(-10px);
+/* JOIN GRUP */
+.join-grup{
+position:fixed;
+bottom:70px;
+right:12px;
+z-index:1000;
+}
+.join-grup a{
+background:#22c55e;
+color:white;
+padding:12px 14px;
+border-radius:25px;
+text-decoration:none;
+font-weight:600;
+display:block;
+font-size:13px;
+}
+
+/* BROADCAST */
+.broadcast{
+position:fixed;
+bottom:130px;
+right:12px;
+z-index:1000;
+}
+.broadcast button{
+background:#3b82f6;
+color:white;
+border:none;
+padding:12px 14px;
+border-radius:25px;
+font-weight:600;
+cursor:pointer;
+font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="cartBtn" onclick="toggleCart()">
-🛒 <span id="count">0</span>
-</div>
+<div id="cartBtn" onclick="toggleCart()">🛒 <span id="count">0</span></div>
 
 <div class="hero">
 <h1>Navyandco.id</h1>
 <p>Marketplace Premium System</p>
 </div>
-
-<h2 class="section-title">Pilihan Produk</h2>
 
 <div class="category">
 <button class="cat-btn" onclick="filter('Premium')">Premium</button>
@@ -225,7 +238,7 @@ transform:translateX(-50%) translateY(-10px);
 <div id="cart">
 <div class="cart-header">
 <h3>Keranjang</h3>
-<span class="close" onclick="toggleCart()">❌</span>
+<span onclick="toggleCart()">❌</span>
 </div>
 <div id="cartBox"></div>
 </div>
@@ -239,61 +252,37 @@ transform:translateX(-50%) translateY(-10px);
 </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
+
+<!-- JOIN GRUP -->
+<div class="join-grup">
+<a href="https://chat.whatsapp.com/XXXXXXX" target="_blank">🔥 Join Grup VIP</a>
+</div>
+
+<!-- BROADCAST -->
+<div class="broadcast">
+<button onclick="promoBroadcast()">📢 Broadcast Promo</button>
+</div>
 
 <script>
 
 const WA="6281234567890";
 
 const products=[
-{
-name:"Canva",cat:"Premium",
-paket:[
-{name:"1 Bulan",price:1000,stock:"Tersedia"},
-{name:"Edukasi Lifetime",price:10000,stock:"Tersedia"},
-{name:"1 Tahun Instan",price:10000,stock:"Tersedia"}
-]
-},
-{
-name:"Netflix",cat:"Premium",
-paket:[
-{name:"1 Profile 1 User",price:30000,stock:"Tersedia"},
-{name:"Random Profile",price:23000,stock:"Tersedia"}
-]
-},
-{
-name:"CapCut",cat:"Premium",
-paket:[
-{name:"7 Hari Sharing",price:4000,stock:"Tersedia"},
-{name:"1 Bulan Private",price:19000,stock:"Tersedia"}
-]
-},
-{
-name:"Instagram Views",cat:"Sosmed",
-paket:[
-{name:"1K Views",price:800,stock:"Tersedia"},
-{name:"Reel Likes 1K",price:7000,stock:"Tersedia"}
-]
-},
-{
-name:"Free Fire Diamond",cat:"Game",
-paket:[
-{name:"10 Diamond",price:3000,stock:"Tersedia"},
-{name:"100 Diamond",price:16000,stock:"Tersedia"}
-]
-}
+{name:"Canva",cat:"Premium",paket:[{name:"1 Bulan",price:1000,stock:"Tersedia"}]},
+{name:"Netflix",cat:"Premium",paket:[{name:"1 User",price:30000,stock:"Tersedia"}]},
+{name:"CapCut",cat:"Premium",paket:[{name:"1 Bulan",price:19000,stock:"Tersedia"}]},
+{name:"Instagram Views",cat:"Sosmed",paket:[{name:"1K Views",price:800,stock:"Tersedia"}]},
+{name:"Free Fire Diamond",cat:"Game",paket:[{name:"100 Diamond",price:16000,stock:"Tersedia"}]}
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
 let selected=null;
 
-/* RENDER */
 function render(data=products){
 let h="";
 data.forEach(p=>{
-h+=`
-<div class="card">
+h+=`<div class="card">
 <h3>${p.name}</h3>
 <button class="btn" onclick="openModal('${p.name}')">Pilih Paket</button>
 </div>`;
@@ -302,12 +291,8 @@ document.getElementById("list").innerHTML=h;
 renderCart();
 }
 
-/* FILTER */
-function filter(c){
-render(products.filter(p=>p.cat===c));
-}
+function filter(c){render(products.filter(p=>p.cat===c));}
 
-/* MODAL */
 function openModal(name){
 selected=products.find(p=>p.name===name);
 
@@ -315,11 +300,8 @@ let h="";
 document.getElementById("title").innerText=name;
 
 selected.paket.forEach((p,i)=>{
-h+=`
-<div class="paket ${p.stock==='Habis'?'habis':''}" onclick="add(${i})">
-<b>${p.name}</b><br>
-<span class="small">${p.stock}</span><br>
-Rp ${p.price}
+h+=`<div class="paket" onclick="add(${i})">
+<b>${p.name}</b><br>Rp ${p.price}
 </div>`;
 });
 
@@ -327,57 +309,30 @@ document.getElementById("paketList").innerHTML=h;
 document.getElementById("modal").style.display="flex";
 }
 
-function closeModal(){
-document.getElementById("modal").style.display="none";
-}
+function closeModal(){document.getElementById("modal").style.display="none";}
 
-/* ADD CART + NOTIFIKASI */
 function add(i){
 let p=selected.paket[i];
-if(p.stock==="Habis")return;
 
-cart.push({
-name:selected.name+" - "+p.name,
-price:p.price
-});
-
+cart.push({name:selected.name+" - "+p.name,price:p.price});
 localStorage.setItem("cart",JSON.stringify(cart));
 renderCart();
 closeModal();
-
-showToast("✔ Ditambahkan ke keranjang");
+toast("✔ Masuk keranjang");
 }
 
-/* TOAST */
-function showToast(text){
-let toast=document.getElementById("toast");
-toast.innerText=text;
-toast.classList.add("show");
-
-setTimeout(()=>{
-toast.classList.remove("show");
-},1500);
-}
-
-/* CART */
 function renderCart(){
-let h="";
-let total=0;
-
+let h="",total=0;
 cart.forEach((c,i)=>{
-h+=`
-<div class="item">
+h+=`<div class="item">
 <span>${c.name}</span>
 <button class="del" onclick="hapus(${i})">X</button>
 </div>`;
 total+=c.price;
 });
 
-h+=`
-<hr>
-<b>Total: Rp ${total}</b>
-<button class="checkout" onclick="checkout()">Checkout WhatsApp</button>
-`;
+h+=`<hr><b>Total Rp ${total}</b>
+<button class="checkout" onclick="checkout()">Checkout WA</button>`;
 
 document.getElementById("cartBox").innerHTML=h;
 document.getElementById("count").innerText=cart.length;
@@ -390,20 +345,30 @@ renderCart();
 }
 
 function checkout(){
-let msg="ORDER NAVYANDCO.ID\n\n";
-let total=0;
-
-cart.forEach(c=>{
-msg+=`- ${c.name} Rp ${c.price}\n`;
-total+=c.price;
-});
-
+let msg="ORDER NAVYANDCO.ID\n\n",total=0;
+cart.forEach(c=>{msg+=`- ${c.name} Rp ${c.price}\n`;total+=c.price;});
 msg+=`\nTOTAL: Rp ${total}`;
 window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg));
 }
 
-function toggleCart(){
-document.getElementById("cart").classList.toggle("active");
+function toggleCart(){document.getElementById("cart").classList.toggle("active");}
+
+function toast(t){
+let x=document.getElementById("toast");
+x.innerText=t;
+x.classList.add("show");
+setTimeout(()=>x.classList.remove("show"),1500);
+}
+
+function promoBroadcast(){
+let msg=`
+🔥 PROMO NAVYANDCO.ID 🔥
+Netflix mulai 15K
+Canva 1K
+FF Diamond murah
+Order cepat 👉 https://wa.me/${WA}
+`;
+window.open("https://wa.me/?text="+encodeURIComponent(msg));
 }
 
 render();
