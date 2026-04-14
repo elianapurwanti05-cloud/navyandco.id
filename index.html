@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navyandco.id - Business System</title>
+<title>Navyandco.id - Shopee System</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<meta name="theme-color" content="#0b132b">
 
 <style>
 body{
@@ -15,37 +17,28 @@ background:linear-gradient(135deg,#0b132b,#1c2541,#3a506b);
 color:white;
 }
 
+/* HEADER */
+.hero{
+padding:30px 20px 10px;
+text-align:left;
+}
+
+.section-title{
+text-align:center;
+margin:10px 0;
+}
+
 /* CART ICON */
-#cart-fixed{
+#cart-btn{
 position:fixed;
 top:15px;
-right:340px;
+right:20px;
 background:#3a506b;
-padding:8px 12px;
+padding:10px 14px;
 border-radius:20px;
 cursor:pointer;
 z-index:1000;
 font-size:13px;
-}
-
-/* HERO LEFT */
-.hero{
-text-align:left;
-padding:40px 20px 20px 20px;
-}
-
-.hero h1{
-margin:0;
-}
-
-.hero p{
-margin-top:5px;
-opacity:0.8;
-}
-
-/* TITLE */
-.section-title{
-text-align:center;
 }
 
 /* CATEGORY */
@@ -54,7 +47,7 @@ display:flex;
 justify-content:center;
 gap:10px;
 flex-wrap:wrap;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
 .cat-btn{
@@ -67,29 +60,23 @@ cursor:pointer;
 border:1px solid #3a506b;
 }
 
-.cat-btn:hover{
-background:#5bc0be;
-color:#0b132b;
-}
-
 /* PRODUCT */
 .container{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+padding:10px;
 }
 
 .card{
 background:#1c2541;
-margin:10px;
 padding:15px;
 border-radius:12px;
-width:200px;
 text-align:center;
 border:1px solid #3a506b;
 }
 
-.icon{font-size:35px;}
+.icon{font-size:32px;}
 
 .btn{
 padding:10px 15px;
@@ -102,53 +89,62 @@ font-weight:600;
 margin-top:10px;
 }
 
-/* CART SIDEBAR */
-#cart-panel{
+/* ================= CART SIDEBAR (SHOPEE STYLE) ================= */
+#cart{
 position:fixed;
 top:0;
-right:0;
-width:320px;
+right:-360px;
+width:340px;
 height:100%;
 background:#1c2541;
+box-shadow:-5px 0 20px rgba(0,0,0,0.5);
 padding:15px;
-box-shadow:-5px 0 20px rgba(0,0,0,0.4);
-overflow-y:auto;
-z-index:999;
 transition:0.3s;
+z-index:999;
+overflow-y:auto;
+}
+
+#cart.active{
+right:0;
 }
 
 .cart-header{
 display:flex;
 justify-content:space-between;
 align-items:center;
+margin-bottom:10px;
+}
+
+.close{
+cursor:pointer;
+font-size:20px;
 }
 
 .cart-item{
 display:flex;
 justify-content:space-between;
-align-items:center;
 padding:8px 0;
 border-bottom:1px solid #3a506b;
 }
 
-.del-btn{
+.del{
 background:red;
 border:none;
 color:white;
-padding:5px 8px;
-border-radius:8px;
+padding:4px 8px;
+border-radius:6px;
 cursor:pointer;
 }
 
-.checkout-btn{
+.checkout{
 width:100%;
 padding:12px;
 background:#22c55e;
 border:none;
 border-radius:10px;
 font-weight:bold;
-cursor:pointer;
 margin-top:10px;
+cursor:pointer;
 }
 
 /* MODAL */
@@ -160,7 +156,6 @@ width:100%;height:100%;
 background:rgba(0,0,0,0.6);
 justify-content:center;
 align-items:center;
-z-index:1000;
 }
 
 .modal-box{
@@ -177,32 +172,28 @@ padding:10px;
 border-radius:10px;
 }
 
-/* NOTIF */
-#notif{
-position:fixed;
-top:20px;
-left:20px;
-background:#22c55e;
-color:#0b132b;
-padding:10px;
-border-radius:10px;
-display:none;
-z-index:9999;
+/* RESPONSIVE */
+@media(max-width:768px){
+.container{grid-template-columns:repeat(2,1fr);}
+#cart{width:100%;}
+}
+@media(max-width:480px){
+.container{grid-template-columns:1fr;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- CART ICON -->
-<div id="cart-fixed">
-🛒 <span id="cart-info">0 Item | Rp 0</span>
+<!-- CART BUTTON -->
+<div id="cart-btn" onclick="toggleCart()">
+CART <span id="count">0</span>
 </div>
 
-<!-- HERO (SUDAH DI KIRI) -->
+<!-- HERO -->
 <div class="hero">
 <h1>Navyandco.id</h1>
-<p>Business System Store</p>
+<p>Marketplace System</p>
 </div>
 
 <h2 class="section-title">Pilihan Produk</h2>
@@ -217,11 +208,11 @@ z-index:9999;
 <!-- PRODUCT -->
 <div class="container" id="list"></div>
 
-<!-- CART SIDEBAR -->
-<div id="cart-panel">
+<!-- CART -->
+<div id="cart">
 <div class="cart-header">
 <h3>Keranjang</h3>
-<span onclick="toggleCart()" style="cursor:pointer;font-size:20px;">❌</span>
+<span class="close" onclick="toggleCart()">❌</span>
 </div>
 
 <div id="cartBox"></div>
@@ -231,165 +222,148 @@ z-index:9999;
 <div id="modal">
 <div class="modal-box">
 <h3 id="title"></h3>
-<select id="paketSelect"></select>
+<select id="paket"></select>
 <br><br>
-<button class="btn" onclick="addCart()">Tambah</button>
+<button class="btn" onclick="add()">Tambah</button>
 <button class="btn" onclick="closeModal()">Tutup</button>
 </div>
 </div>
 
-<!-- NOTIF -->
-<div id="notif"></div>
-
 <script>
 
-const ADMIN_WA="6281234567890";
+const WA="6281234567890";
 
 const products=[
-{name:"Netflix",icon:"🎬",category:"Premium",
-paket:[{name:"1 Profile",price:14000},{name:"Sharing",price:22000}]},
-
-{name:"Canva",icon:"🎨",category:"Premium",
-paket:[{name:"1 Bulan",price:8000}]},
-
-{name:"CapCut",icon:"✂️",category:"Premium",
-paket:[{name:"Pro",price:10000}]},
-
-{name:"IG Followers",icon:"📱",category:"Sosmed",
-paket:[{name:"1K Followers",price:10000}]},
-
-{name:"TikTok Like",icon:"❤️",category:"Sosmed",
-paket:[{name:"1K Like",price:8000}]},
-
-{name:"Mobile Legends",icon:"🎮",category:"Game",
-paket:[{name:"86 Diamond",price:20000}]}
+{name:"Netflix",icon:"🎬",cat:"Premium",paket:[
+{name:"1 Profile",price:14000},
+{name:"Sharing",price:22000}
+]},
+{name:"Canva",icon:"🎨",cat:"Premium",paket:[
+{name:"1 Bulan",price:8000}
+]},
+{name:"CapCut",icon:"✂️",cat:"Premium",paket:[
+{name:"Pro",price:10000}
+]},
+{name:"IG Followers",icon:"📱",cat:"Sosmed",paket:[
+{name:"1K Followers",price:10000}
+]},
+{name:"Mobile Legends",icon:"🎮",cat:"Game",paket:[
+{name:"86 Diamond",price:20000}
+]}
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
-let selectedProduct=null;
+let selected=null;
 
-function updateCart(){
-let total=0;
-cart.forEach(c=>total+=c.price);
-document.getElementById("cart-info").innerText=
-`${cart.length} Item | Rp ${total}`;
-}
-
+/* CART TOGGLE */
 function toggleCart(){
-let panel=document.getElementById("cart-panel");
-panel.style.display = panel.style.display==="none" ? "block" : "none";
+document.getElementById("cart").classList.toggle("active");
 }
 
-function filter(cat){
-render(products.filter(p=>p.category===cat));
+/* FILTER */
+function filter(c){
+render(products.filter(p=>p.cat===c));
 }
 
+/* RENDER */
 function render(data=products){
-let html="";
+let h="";
 data.forEach(p=>{
-html+=`
+h+=`
 <div class="card">
 <div class="icon">${p.icon}</div>
 <h3>${p.name}</h3>
 <button class="btn" onclick="openModal('${p.name}')">Pilih Paket</button>
 </div>`;
 });
-document.getElementById("list").innerHTML=html;
-renderCart();
+document.getElementById("list").innerHTML=h;
 updateCart();
+renderCart();
 }
 render();
 
+/* MODAL */
 function openModal(name){
-selectedProduct=products.find(p=>p.name===name);
+selected=products.find(p=>p.name===name);
 
-let sel=document.getElementById("paketSelect");
+let sel=document.getElementById("paket");
 sel.innerHTML="";
 
-selectedProduct.paket.forEach((p,i)=>{
-sel.innerHTML+=`
-<option value="${i}">
-${p.name} - Rp ${p.price}
-</option>`;
+selected.paket.forEach((p,i)=>{
+sel.innerHTML+=`<option value="${i}">${p.name} - Rp ${p.price}</option>`;
 });
 
 document.getElementById("modal").style.display="flex";
-document.getElementById("title").innerText=selectedProduct.name;
+document.getElementById("title").innerText=selected.name;
 }
 
 function closeModal(){
 document.getElementById("modal").style.display="none";
 }
 
-function addCart(){
-let i=document.getElementById("paketSelect").value;
-let paket=selectedProduct.paket[i];
+/* ADD CART */
+function add(){
+let i=document.getElementById("paket").value;
+let p=selected.paket[i];
 
-cart.push({
-name:selectedProduct.name+" - "+paket.name,
-price:paket.price
-});
-
+cart.push({name:selected.name+" - "+p.name,price:p.price});
 localStorage.setItem("cart",JSON.stringify(cart));
 
-notif("✔ Masuk keranjang");
+closeModal();
 renderCart();
 updateCart();
-closeModal();
 }
 
+/* CART */
 function renderCart(){
-let html="";
+let h="";
 let total=0;
 
 cart.forEach((c,i)=>{
-html+=`
+h+=`
 <div class="cart-item">
-<span>${c.name} - Rp ${c.price}</span>
-<button class="del-btn" onclick="hapus(${i})">❌</button>
+<span>${c.name}</span>
+<button class="del" onclick="hapus(${i})">X</button>
 </div>`;
 total+=c.price;
 });
 
-html+=`
+h+=`
 <hr>
 <b>Total: Rp ${total}</b>
-<button class="checkout-btn" onclick="checkout()">Checkout WhatsApp</button>
+<button class="checkout" onclick="checkout()">Checkout WA</button>
 `;
 
-document.getElementById("cartBox").innerHTML=html;
+document.getElementById("cartBox").innerHTML=h;
+document.getElementById("count").innerText=cart.length;
 }
 
+/* DELETE */
 function hapus(i){
 cart.splice(i,1);
 localStorage.setItem("cart",JSON.stringify(cart));
 renderCart();
 updateCart();
-notif("❌ Item dihapus");
 }
 
+/* CHECKOUT */
 function checkout(){
 let msg="ORDER NAVYANDCO.ID\n\n";
 let total=0;
 
-cart.forEach((c,i)=>{
-msg+=`${i+1}. ${c.name} - Rp ${c.price}\n`;
+cart.forEach(c=>{
+msg+=`- ${c.name} Rp ${c.price}\n`;
 total+=c.price;
 });
 
 msg+=`\nTOTAL: Rp ${total}`;
 
-window.open(`https://wa.me/${ADMIN_WA}?text=`+encodeURIComponent(msg));
+window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg));
 }
 
-function notif(t){
-let n=document.getElementById("notif");
-n.innerText=t;
-n.style.display="block";
-setTimeout(()=>n.style.display="none",2000);
-}
+/* INIT */
+function updateCart(){}
 
-updateCart();
 renderCart();
 
 </script>
