@@ -1,0 +1,23 @@
+body{
+margin:0;
+font-family:Poppins;
+background:#f5f7ff;
+}
+
+#cart{
+position:fixed;
+right:-100%;
+top:0;
+width:300px;
+height:100%;
+background:white;
+transition:0.3s;
+}
+
+#cart.active{right:0;}
+
+.card{
+padding:10px;
+border:1px solid #ddd;
+margin:10px;
+}
