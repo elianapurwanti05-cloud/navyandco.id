@@ -1,35 +1,307 @@
-<!-- TOGGLE -->
-<div id="themeToggle" onclick="toggleTheme()">🌙</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navyandco.id Store</title>
 
-<!-- CART BUTTON -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--navy:#0b132b;
+--white:#ffffff;
+--cyan:#00e5ff;
+--bg:#f5f7ff;
+--card:#ffffff;
+--text:#0b132b;
+}
+
+/* DARK MODE (NAVY + CYAN) */
+body.dark{
+--bg:#0b132b;
+--card:#1c2541;
+--text:#00e5ff;
+}
+
+/* LIGHT MODE (NAVY + WHITE) */
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+color:var(--text);
+transition:0.3s;
+}
+
+/* TOGGLE */
+#themeToggle{
+position:fixed;
+top:12px;
+left:12px;
+background:#1c2541;
+color:white;
+padding:10px;
+border-radius:20px;
+cursor:pointer;
+z-index:2000;
+}
+
+/* CART BTN */
+#cartBtn{
+position:fixed;
+top:12px;
+right:12px;
+background:#1c2541;
+color:white;
+padding:10px;
+border-radius:20px;
+cursor:pointer;
+z-index:2000;
+}
+
+/* HERO */
+.hero{
+background:var(--card);
+margin:15px;
+padding:25px;
+text-align:center;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.hero h1{margin:0;font-size:26px;}
+.hero p{opacity:.7;font-size:13px;}
+
+.hero-box span{
+background:#eef2ff;
+padding:6px 10px;
+border-radius:20px;
+font-size:12px;
+margin:3px;
+display:inline-block;
+}
+
+body.dark .hero-box span{
+background:#00e5ff;
+color:#000;
+}
+
+/* BUTTON */
+.hero-btns button,
+.hero-btns a{
+padding:10px 14px;
+border-radius:25px;
+border:none;
+cursor:pointer;
+font-weight:600;
+text-decoration:none;
+margin:5px;
+}
+
+.hero-btns button{background:#1c2541;color:white;}
+.hero-btns a{background:#00e5ff;color:#000;}
+
+/* CATEGORY */
+.category{
+display:flex;
+justify-content:center;
+gap:8px;
+flex-wrap:wrap;
+padding:10px;
+}
+
+.cat-btn{
+padding:10px;
+border:none;
+border-radius:20px;
+background:var(--card);
+border:1px solid #ddd;
+cursor:pointer;
+color:var(--text);
+}
+
+/* GRID */
+.container{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+padding:10px;
+}
+
+@media(max-width:900px){.container{grid-template-columns:2fr 2fr;}}
+@media(max-width:600px){.container{grid-template-columns:1fr;}}
+
+/* CARD */
+.card{
+background:var(--card);
+padding:15px;
+border-radius:15px;
+border:1px solid #eee;
+text-align:center;
+}
+
+/* BUTTON */
+.btn{
+width:100%;
+padding:10px;
+border:none;
+border-radius:20px;
+background:#1c2541;
+color:white;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* CART */
+#cart{
+position:fixed;
+top:0;
+right:-100%;
+width:100%;
+max-width:350px;
+height:100%;
+background:var(--card);
+padding:15px;
+transition:0.3s;
+overflow:auto;
+z-index:999;
+}
+
+#cart.active{right:0;}
+
+.item{
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+border-bottom:1px solid #ddd;
+}
+
+.del{
+background:red;
+border:none;
+color:white;
+padding:4px 8px;
+border-radius:5px;
+cursor:pointer;
+}
+
+/* MODAL */
+#modal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:var(--card);
+padding:20px;
+border-radius:12px;
+width:90%;
+max-width:320px;
+}
+
+.paket{
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
+margin:6px 0;
+cursor:pointer;
+}
+
+/* TOAST */
+#toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#1c2541;
+color:white;
+padding:12px;
+border-radius:10px;
+opacity:0;
+transition:0.3s;
+}
+#toast.show{opacity:1;}
+
+/* JOIN */
+.join-grup{
+position:fixed;
+bottom:70px;
+right:12px;
+}
+.join-grup a{
+background:#00e5ff;
+color:#000;
+padding:12px 14px;
+border-radius:25px;
+text-decoration:none;
+font-weight:600;
+font-size:13px;
+}
+
+/* BROADCAST */
+.broadcast{
+position:fixed;
+bottom:130px;
+right:12px;
+}
+.broadcast button{
+background:#1c2541;
+color:white;
+border:none;
+padding:12px;
+border-radius:25px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="themeToggle" onclick="toggleTheme()">🌙</div>
 <div id="cartBtn" onclick="toggleCart()">🛒 <span id="count">0</span></div>
 
 <!-- HERO -->
 <div class="hero">
-<h1>🔥 Navyandco.id</h1>
-<p>Marketplace Digital Premium</p>
+<h1>✧˖°.NAVYANDCO.ID STORE.°˖✧</h1>
+<p>Marketplace Digital Premium • Murah • Cepat</p>
+
+<div class="hero-btns">
+<button onclick="promo()">📢 Promo</button>
+<a href="https://chat.whatsapp.com/FNxzou8Imjl4IlNxBMqwFu" target="_blank">🔥 Join Grup </a>
+<a href="https://www.instagram.com/navyandco.id/" target="_blank">📸 Instagram</a>
+<a href="https://t.me/KnightsOf_Starlight" target="_blank">💬 Telegram</a>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:10px;">
+<h3 style="margin:0;"> °.🫧✧˖Pilih Kategori˖✧🫧°.</h3>
+<p style="margin:5px 0 10px;opacity:.7;font-size:13px;">
+Silakan pilih kategori di bawah
+</p>
 </div>
 
 <!-- CATEGORY -->
 <div class="category">
-<button onclick="filter('Premium')">Premium</button>
-<button onclick="filter('Sosmed')">Sosmed</button>
-<button onclick="filter('Game')">Game</button>
+<button class="cat-btn" onclick="filter('Premium')">💎 Premium</button>
+<button class="cat-btn" onclick="filter('Sosmed')">📱 Sosmed</button>
+<button class="cat-btn" onclick="filter('Game')">🎮 Game</button>
 </div>
 
 <!-- PRODUCT -->
-<div id="list"></div>
+<div class="container" id="list"></div>
 
 <!-- CART -->
 <div id="cart">
 <h3>Keranjang</h3>
 <div id="cartBox"></div>
 
-<button onclick="clearCart()" style="background:red;color:white;">
-🗑 Hapus Semua
-</button>
-
-<button onclick="checkout()">Checkout WA</button>
+<button onclick="clearCart()" class="btn" style="background:red;margin-top:10px;">🗑 Clear Cart</button>
+<button onclick="checkout()" class="btn">Checkout WA</button>
 </div>
 
 <!-- MODAL -->
@@ -37,11 +309,177 @@
 <div class="box">
 <h3 id="title"></h3>
 <div id="paketList"></div>
-<button onclick="closeModal()">Tutup</button>
+<button onclick="closeModal()" class="btn">Tutup</button>
 </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- JOIN -->
-<a href="https://chat.whatsapp.com/FNxzou8Imjl4IlNxBMqwFu">Join Grup</a>
+<script>
+
+const WA="62881036235419";
+
+<!-- DATA PRODUK -->
+const products=[
+{
+name:"Canva",cat:"Premium",paket:[
+{name:"1 Bulan",price:1000},
+{name:"Edukasi Lifetime",price:10000},
+{name:"1 Tahun Instan",price:10000}
+]
+},
+{
+name:"Netflix",cat:"Premium",paket:[
+{name:"1 User",price:30000},
+{name:"Random",price:23000}
+]
+},
+{
+name:"Youtube",cat:"Premium",paket:[
+{name:"1 Bulan Akun Buyyer",price:2000},
+{name:"1 Bulan Akun Admin",price:8000},
+{name:"3 Bulan No Garansi",price:15000},
+{name:"3 Bulan Garansi",price:25000},
+{name:"Famhead 1 Bulan",price:10000}
+]       
+},
+{
+name:"Spotify",cat:"Premium",paket:[
+{name:"1 Bulan",price:15000},
+{name:"3 Bulan",price:40000}
+]
+},
+{
+name:"Spotify",cat:"Premium",paket:[
+{name:"1 Bulan",price:15000},
+{name:"3 Bulan",price:40000}
+]           
+},
+{name:"Instagram",cat:"Sosmed",paket:[
+{name:"1 Akun",price:5000},
+{name:"3 Akun",price:12000}
+]                                                            
+},
+{
+name:"Facebook",cat:"Sosmed",paket:[
+{name:"1 Akun",price:5000},
+{name:"3 Akun",price:12000}
+]
+},
+{
+name:"Free Fire",cat:"Game",paket:[
+{name:"100 Diamond",price:16000},
+{name:"160 Diamond",price:24000}
+]
+}
+];
+
+let cart=[];
+let selected=null;
+
+function render(data=products){
+let h="";
+data.forEach(p=>{
+h+=`<div class="card">
+<h3>${p.name}</h3>
+<button class="btn" onclick="openModal('${p.name}')">Pilih paket</button>
+</div>`;
+});
+document.getElementById("list").innerHTML=h;
+renderCart();
+}
+
+function filter(c){
+render(products.filter(p=>p.cat===c));
+}
+
+function openModal(name){
+selected=products.find(p=>p.name===name);
+
+let h="";
+document.getElementById("title").innerText=name;
+
+selected.paket.forEach((p,i)=>{
+h+=`<div class="paket" onclick="add(${i})">${p.name}<br>Rp ${p.price}</div>`;
+});
+
+document.getElementById("paketList").innerHTML=h;
+document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+function add(i){
+cart.push(selected.paket[i]);
+renderCart();
+toast("Masuk cart");
+closeModal();
+}
+
+function renderCart(){
+let h="",t=0;
+
+cart.forEach((c,i)=>{
+h+=`
+<div class="item">
+${c.name} Rp ${c.price}
+<button class="del" onclick="hapus(${i})">X</button>
+</div>`;
+t+=c.price;
+});
+
+document.getElementById("cartBox").innerHTML=h+`<hr>Total Rp ${t}`;
+document.getElementById("count").innerText=cart.length;
+}
+
+function hapus(i){
+cart.splice(i,1);
+renderCart();
+}
+
+function clearCart(){
+cart=[];
+renderCart();
+toast("Cart dikosongkan");
+}
+
+function checkout(){
+let msg="ORDER NAVYANDCO\n\n";
+let total=0;
+
+cart.forEach(c=>{
+msg+=`- ${c.name} Rp ${c.price}\n`;
+total+=c.price;
+});
+
+msg+=`\nTOTAL: Rp ${total}`;
+window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg));
+}
+
+function toggleCart(){
+document.getElementById("cart").classList.toggle("active");
+}
+
+function toast(t){
+let x=document.getElementById("toast");
+x.innerText=t;
+x.classList.add("show");
+setTimeout(()=>x.classList.remove("show"),1500);
+}
+
+function promo(){
+window.open("https://wa.me/?text="+encodeURIComponent("🔥 PROMO NAVYANDCO 🔥"));
+}
+
+function toggleTheme(){
+document.body.classList.toggle("dark");
+}
+
+render();
+
+</script>
+
+</body>
+</html>
