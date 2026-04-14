@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navyandco.id - Shopee System</title>
+<title>Navyandco.id Store</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-<meta name="theme-color" content="#0b132b">
 
 <style>
 body{
@@ -19,100 +17,104 @@ color:white;
 
 /* HEADER */
 .hero{
-padding:30px 20px 10px;
-text-align:left;
-}
-
-.section-title{
+padding:20px;
 text-align:center;
-margin:10px 0;
 }
 
-/* CART ICON */
-#cart-btn{
+/* CART BUTTON */
+#cartBtn{
 position:fixed;
-top:15px;
-right:20px;
+top:12px;
+right:12px;
 background:#3a506b;
 padding:10px 14px;
 border-radius:20px;
 cursor:pointer;
 z-index:1000;
-font-size:13px;
 }
 
 /* CATEGORY */
 .category{
 display:flex;
 justify-content:center;
-gap:10px;
+gap:8px;
 flex-wrap:wrap;
-margin-bottom:15px;
+padding:10px;
 }
 
 .cat-btn{
-padding:10px 15px;
+padding:10px 14px;
 border:none;
 border-radius:20px;
 background:#1c2541;
 color:white;
 cursor:pointer;
-border:1px solid #3a506b;
+font-size:14px;
 }
 
-/* PRODUCT */
+/* PRODUCT GRID - RESPONSIVE */
 .container{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:15px;
+gap:10px;
 padding:10px;
 }
 
+/* TABLET */
+@media(max-width:900px){
+.container{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+/* HP */
+@media(max-width:600px){
+.container{
+grid-template-columns:1fr;
+}
+}
+
+/* CARD */
 .card{
 background:#1c2541;
 padding:15px;
 border-radius:12px;
 text-align:center;
-border:1px solid #3a506b;
 }
 
-.icon{font-size:32px;}
-
+/* BUTTON */
 .btn{
-padding:10px 15px;
+padding:10px;
 border:none;
-border-radius:25px;
-cursor:pointer;
+border-radius:20px;
 background:#5bc0be;
-color:#0b132b;
-font-weight:600;
+cursor:pointer;
 margin-top:10px;
+font-weight:600;
+width:100%;
 }
 
-/* ================= CART SIDEBAR (SHOPEE STYLE) ================= */
+/* CART */
 #cart{
 position:fixed;
 top:0;
-right:-360px;
-width:340px;
+right:-100%;
+width:100%;
+max-width:360px;
 height:100%;
 background:#1c2541;
-box-shadow:-5px 0 20px rgba(0,0,0,0.5);
-padding:15px;
 transition:0.3s;
+padding:15px;
+overflow:auto;
 z-index:999;
-overflow-y:auto;
 }
 
-#cart.active{
-right:0;
-}
+#cart.active{right:0;}
 
 .cart-header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:10px;
 }
 
 .close{
@@ -120,7 +122,7 @@ cursor:pointer;
 font-size:20px;
 }
 
-.cart-item{
+.item{
 display:flex;
 justify-content:space-between;
 padding:8px 0;
@@ -136,15 +138,15 @@ border-radius:6px;
 cursor:pointer;
 }
 
+/* CHECKOUT */
 .checkout{
 width:100%;
 padding:12px;
 background:#22c55e;
 border:none;
 border-radius:10px;
-font-weight:bold;
 margin-top:10px;
-cursor:pointer;
+font-weight:600;
 }
 
 /* MODAL */
@@ -158,54 +160,50 @@ justify-content:center;
 align-items:center;
 }
 
-.modal-box{
+.box{
 background:#1c2541;
 padding:20px;
 border-radius:12px;
-width:300px;
-text-align:center;
+width:90%;
+max-width:320px;
 }
 
-select{
-width:100%;
+.paket{
 padding:10px;
+border:1px solid #3a506b;
 border-radius:10px;
+margin:6px 0;
+cursor:pointer;
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-.container{grid-template-columns:repeat(2,1fr);}
-#cart{width:100%;}
-}
-@media(max-width:480px){
-.container{grid-template-columns:1fr;}
-}
+.habis{opacity:.4}
+
+.small{font-size:12px;opacity:.8}
+
+.section-title{text-align:center}
 </style>
 </head>
 
 <body>
 
-<!-- CART BUTTON -->
-<div id="cart-btn" onclick="toggleCart()">
-CART <span id="count">0</span>
+<div id="cartBtn" onclick="toggleCart()">
+🛒 <span id="count">0</span>
 </div>
 
-<!-- HERO -->
 <div class="hero">
 <h1>Navyandco.id</h1>
-<p>Marketplace System</p>
+<p>Marketplace Premium System</p>
 </div>
 
 <h2 class="section-title">Pilihan Produk</h2>
 
-<!-- CATEGORY -->
 <div class="category">
 <button class="cat-btn" onclick="filter('Premium')">Premium</button>
 <button class="cat-btn" onclick="filter('Sosmed')">Sosmed</button>
 <button class="cat-btn" onclick="filter('Game')">Game</button>
+<button class="cat-btn" onclick="render()">All</button>
 </div>
 
-<!-- PRODUCT -->
 <div class="container" id="list"></div>
 
 <!-- CART -->
@@ -214,17 +212,14 @@ CART <span id="count">0</span>
 <h3>Keranjang</h3>
 <span class="close" onclick="toggleCart()">❌</span>
 </div>
-
 <div id="cartBox"></div>
 </div>
 
 <!-- MODAL -->
 <div id="modal">
-<div class="modal-box">
+<div class="box">
 <h3 id="title"></h3>
-<select id="paket"></select>
-<br><br>
-<button class="btn" onclick="add()">Tambah</button>
+<div id="paketList"></div>
 <button class="btn" onclick="closeModal()">Tutup</button>
 </div>
 </div>
@@ -234,36 +229,47 @@ CART <span id="count">0</span>
 const WA="6281234567890";
 
 const products=[
-{name:"Netflix",icon:"🎬",cat:"Premium",paket:[
-{name:"1 Profile",price:14000},
-{name:"Sharing",price:22000}
-]},
-{name:"Canva",icon:"🎨",cat:"Premium",paket:[
-{name:"1 Bulan",price:8000}
-]},
-{name:"CapCut",icon:"✂️",cat:"Premium",paket:[
-{name:"Pro",price:10000}
-]},
-{name:"IG Followers",icon:"📱",cat:"Sosmed",paket:[
-{name:"1K Followers",price:10000}
-]},
-{name:"Mobile Legends",icon:"🎮",cat:"Game",paket:[
-{name:"86 Diamond",price:20000}
-]}
+{
+name:"Canva",cat:"Premium",
+paket:[
+{name:"1 Bulan",price:1000,stock:"Tersedia"},
+{name:"Edukasi Lifetime",price:10000,stock:"Tersedia"},
+{name:"1 Tahun Instan",price:10000,stock:"Tersedia"}
+]
+},
+{
+name:"Netflix",cat:"Premium",
+paket:[
+{name:"1 Profile 2 User",price:15000,stock:"Habis"},
+{name:"1 Profile 1 User",price:30000,stock:"Tersedia"},
+{name:"Random Profile",price:23000,stock:"Tersedia"}
+]
+},
+{
+name:"CapCut",cat:"Premium",
+paket:[
+{name:"7 Hari Sharing",price:4000,stock:"Tersedia"},
+{name:"14 Hari Private",price:6000,stock:"Tersedia"}
+]
+},
+{
+name:"Instagram Views",cat:"Sosmed",
+paket:[
+{name:"1K Views",price:800,stock:"Tersedia"},
+{name:"Reel Likes 1K",price:7000,stock:"Tersedia"}
+]
+},
+{
+name:"Free Fire Diamond",cat:"Game",
+paket:[
+{name:"10 Diamond",price:3000,stock:"Tersedia"},
+{name:"100 Diamond",price:16000,stock:"Tersedia"}
+]
+}
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
 let selected=null;
-
-/* CART TOGGLE */
-function toggleCart(){
-document.getElementById("cart").classList.toggle("active");
-}
-
-/* FILTER */
-function filter(c){
-render(products.filter(p=>p.cat===c));
-}
 
 /* RENDER */
 function render(data=products){
@@ -271,57 +277,61 @@ let h="";
 data.forEach(p=>{
 h+=`
 <div class="card">
-<div class="icon">${p.icon}</div>
 <h3>${p.name}</h3>
 <button class="btn" onclick="openModal('${p.name}')">Pilih Paket</button>
 </div>`;
 });
 document.getElementById("list").innerHTML=h;
-updateCart();
 renderCart();
 }
-render();
+
+/* FILTER */
+function filter(c){
+render(products.filter(p=>p.cat===c));
+}
 
 /* MODAL */
 function openModal(name){
 selected=products.find(p=>p.name===name);
 
-let sel=document.getElementById("paket");
-sel.innerHTML="";
+let h="";
+document.getElementById("title").innerText=name;
 
 selected.paket.forEach((p,i)=>{
-sel.innerHTML+=`<option value="${i}">${p.name} - Rp ${p.price}</option>`;
+h+=`
+<div class="paket ${p.stock==='Habis'?'habis':''}" onclick="add(${i})">
+<b>${p.name}</b><br>
+<span class="small">${p.stock}</span><br>
+Rp ${p.price}
+</div>`;
 });
 
+document.getElementById("paketList").innerHTML=h;
 document.getElementById("modal").style.display="flex";
-document.getElementById("title").innerText=selected.name;
 }
 
 function closeModal(){
 document.getElementById("modal").style.display="none";
 }
 
-/* ADD CART */
-function add(){
-let i=document.getElementById("paket").value;
+/* CART */
+function add(i){
 let p=selected.paket[i];
+if(p.stock==="Habis")return;
 
 cart.push({name:selected.name+" - "+p.name,price:p.price});
 localStorage.setItem("cart",JSON.stringify(cart));
-
-closeModal();
 renderCart();
-updateCart();
+closeModal();
 }
 
-/* CART */
 function renderCart(){
 let h="";
 let total=0;
 
 cart.forEach((c,i)=>{
 h+=`
-<div class="cart-item">
+<div class="item">
 <span>${c.name}</span>
 <button class="del" onclick="hapus(${i})">X</button>
 </div>`;
@@ -331,22 +341,19 @@ total+=c.price;
 h+=`
 <hr>
 <b>Total: Rp ${total}</b>
-<button class="checkout" onclick="checkout()">Checkout WA</button>
+<button class="checkout" onclick="checkout()">Checkout WhatsApp</button>
 `;
 
 document.getElementById("cartBox").innerHTML=h;
 document.getElementById("count").innerText=cart.length;
 }
 
-/* DELETE */
 function hapus(i){
 cart.splice(i,1);
 localStorage.setItem("cart",JSON.stringify(cart));
 renderCart();
-updateCart();
 }
 
-/* CHECKOUT */
 function checkout(){
 let msg="ORDER NAVYANDCO.ID\n\n";
 let total=0;
@@ -357,14 +364,14 @@ total+=c.price;
 });
 
 msg+=`\nTOTAL: Rp ${total}`;
-
 window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg));
 }
 
-/* INIT */
-function updateCart(){}
+function toggleCart(){
+document.getElementById("cart").classList.toggle("active");
+}
 
-renderCart();
+render();
 
 </script>
 
