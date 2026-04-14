@@ -15,7 +15,7 @@ background:linear-gradient(135deg,#0b132b,#1c2541,#3a506b);
 color:white;
 }
 
-/* HEADER */
+/* HERO */
 .hero{
 padding:20px;
 text-align:center;
@@ -52,7 +52,7 @@ cursor:pointer;
 font-size:14px;
 }
 
-/* PRODUCT GRID - RESPONSIVE */
+/* GRID */
 .container{
 display:grid;
 grid-template-columns:repeat(3,1fr);
@@ -60,18 +60,12 @@ gap:10px;
 padding:10px;
 }
 
-/* TABLET */
 @media(max-width:900px){
-.container{
-grid-template-columns:repeat(2,1fr);
-}
+.container{grid-template-columns:repeat(2,1fr);}
 }
 
-/* HP */
 @media(max-width:600px){
-.container{
-grid-template-columns:1fr;
-}
+.container{grid-template-columns:1fr;}
 }
 
 /* CARD */
@@ -138,7 +132,6 @@ border-radius:6px;
 cursor:pointer;
 }
 
-/* CHECKOUT */
 .checkout{
 width:100%;
 padding:12px;
@@ -181,6 +174,28 @@ cursor:pointer;
 .small{font-size:12px;opacity:.8}
 
 .section-title{text-align:center}
+
+/* TOAST NOTIFIKASI */
+#toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#22c55e;
+color:white;
+padding:12px 18px;
+border-radius:10px;
+font-size:14px;
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+z-index:2000;
+}
+
+#toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(-10px);
+}
 </style>
 </head>
 
@@ -224,6 +239,9 @@ cursor:pointer;
 </div>
 </div>
 
+<!-- TOAST -->
+<div id="toast"></div>
+
 <script>
 
 const WA="6281234567890";
@@ -240,7 +258,6 @@ paket:[
 {
 name:"Netflix",cat:"Premium",
 paket:[
-{name:"1 Profile 2 User",price:15000,stock:"Habis"},
 {name:"1 Profile 1 User",price:30000,stock:"Tersedia"},
 {name:"Random Profile",price:23000,stock:"Tersedia"}
 ]
@@ -249,7 +266,7 @@ paket:[
 name:"CapCut",cat:"Premium",
 paket:[
 {name:"7 Hari Sharing",price:4000,stock:"Tersedia"},
-{name:"14 Hari Private",price:6000,stock:"Tersedia"}
+{name:"1 Bulan Private",price:19000,stock:"Tersedia"}
 ]
 },
 {
@@ -314,17 +331,35 @@ function closeModal(){
 document.getElementById("modal").style.display="none";
 }
 
-/* CART */
+/* ADD CART + NOTIFIKASI */
 function add(i){
 let p=selected.paket[i];
 if(p.stock==="Habis")return;
 
-cart.push({name:selected.name+" - "+p.name,price:p.price});
+cart.push({
+name:selected.name+" - "+p.name,
+price:p.price
+});
+
 localStorage.setItem("cart",JSON.stringify(cart));
 renderCart();
 closeModal();
+
+showToast("✔ Ditambahkan ke keranjang");
 }
 
+/* TOAST */
+function showToast(text){
+let toast=document.getElementById("toast");
+toast.innerText=text;
+toast.classList.add("show");
+
+setTimeout(()=>{
+toast.classList.remove("show");
+},1500);
+}
+
+/* CART */
 function renderCart(){
 let h="";
 let total=0;
